@@ -1,4 +1,5 @@
 const Problem = require("../models/Problem");
+const { generateExplanation } = require("../utils/gemini"); // ✅ ADD THIS
 
 /**
  * CREATE PROBLEM
@@ -40,6 +41,42 @@ exports.createProblem = async (req, res) => {
     });
 
     res.status(201).json(problem);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+exports.generateAnalysis = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const problem = await Problem.findOne({
+      _id: id,
+      userId: req.user
+    });
+
+    if (!problem) {
+      return res.status(404).json({ error: "Problem not found" });
+    }
+
+    // Call AI
+    const aiResult = await generateExplanation({
+      question: problem.description,
+      code: problem.code
+       });
+
+    // Update problem with AI results
+    problem.intuition = aiResult.intuition;
+    problem.timeComplexity = aiResult.timeComplexity;
+    problem.spaceComplexity = aiResult.spaceComplexity;
+
+    await problem.save();
+
+    res.json({
+      message: "AI analysis generated successfully",
+      intuition: problem.intuition,
+      timeComplexity: problem.timeComplexity,
+      spaceComplexity: problem.spaceComplexity
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -137,3 +174,66 @@ exports.getMyProblems = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+exports.getFolders = async (req, res) => {
+  try {
+    const folders = await Problem.aggregate([
+      { $match: { userId: new mongoose.Types.ObjectId(req.user) } },
+      {
+        $group: {
+          _id: "$topic",
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          topic: "$_id",
+          count: 1,
+          _id: 0
+        }
+      },
+      { $sort: { count: -1 } }
+    ]);
+
+    res.json(folders);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+/**
+ * GET FOLDERS / TOPIC STATS
+ * GET /api/problems/folders
+ */
+const mongoose = require("mongoose");
+
+exports.getFolders = async (req, res) => {
+  try {
+    const userId = new mongoose.Types.ObjectId(req.user);
+
+    const folders = await Problem.aggregate([
+      { $match: { userId } },
+      {
+        $group: {
+          _id: "$topic",
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          topic: "$_id",
+          count: 1,
+          _id: 0
+        }
+      },
+      { $sort: { count: -1 } }
+    ]);
+
+    res.json(folders);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+

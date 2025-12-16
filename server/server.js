@@ -21,6 +21,10 @@ app.use("/api/user", userRoutes); // This line mounts the route
 
 app.use("/api/problems", problemRoutes);
 app.use("/api/dashboard", require("./routes/dashboardRoutes"));
+app.use("/api/leaderboard", require("./routes/leaderboardRoutes"));
+app.use("/api/export", require("./routes/exportRoutes"));
+app.use("/api/export", require("./routes/pdfRoutes"));
+
 
 
 
