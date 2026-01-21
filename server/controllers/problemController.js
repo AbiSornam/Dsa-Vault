@@ -174,31 +174,7 @@ exports.getMyProblems = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-exports.getFolders = async (req, res) => {
-  try {
-    const folders = await Problem.aggregate([
-      { $match: { userId: new mongoose.Types.ObjectId(req.user) } },
-      {
-        $group: {
-          _id: "$topic",
-          count: { $sum: 1 }
-        }
-      },
-      {
-        $project: {
-          topic: "$_id",
-          count: 1,
-          _id: 0
-        }
-      },
-      { $sort: { count: -1 } }
-    ]);
 
-    res.json(folders);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
 
 
 /**

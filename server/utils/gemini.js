@@ -29,7 +29,8 @@ ${code}
   const text = result.response.text();
 
   try {
-    return JSON.parse(text);
+    const jsonStr = text.replace(/```json|```/g, "").trim();
+    return JSON.parse(jsonStr);
   } catch (err) {
     return {
       error: "AI returned non-JSON",
