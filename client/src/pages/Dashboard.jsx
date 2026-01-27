@@ -2,16 +2,17 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, LineChart, Line
+  PieChart, Pie, Cell, LineChart, Line, Legend
 } from 'recharts';
 import { 
   Code, Calendar, Clock, Trophy, 
-  ArrowUpRight, ArrowDownRight, Activity
+  ArrowUpRight, TrendingUp, Activity, Target
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import api from '../services/api';
 
 const COLORS = ['#10B981', '#F59E0B', '#EF4444']; // Easy, Medium, Hard
-const TOPIC_COLORS = ['#3B82F6', '#8B5CF6', '#EC4899', '#10B981', '#F59E0B'];
+const TOPIC_COLORS = ['#3B82F6', '#8B5CF6', '#EC4899', '#10B981', '#F59E0B', '#06B6D4'];
 
 const Dashboard = () => {
   const [summary, setSummary] = useState(null);
@@ -53,43 +54,50 @@ const Dashboard = () => {
   }
 
   const difficultyData = [
-    { name: 'Easy', value: summary?.easySolved || 0 },
-    { name: 'Medium', value: summary?.mediumSolved || 0 },
-    { name: 'Hard', value: summary?.hardSolved || 0 },
+    { name: 'Easy', value: summary?.easy || 0 },
+    { name: 'Medium', value: summary?.medium || 0 },
+    { name: 'Hard', value: summary?.hard || 0 },
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/20 to-slate-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
-          <p className="text-slate-500 mt-1">Track your progress and analyze your coding journey</p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
+            <p className="text-slate-500 mt-1">Track your progress and analyze your coding journey</p>
+          </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard 
             title="Total Problems" 
-            value={summary?.totalSolved || 0} 
-            icon={<Code className="text-blue-600" />}
-            trend="+5 this week" // Mock trend for now
+            value={summary?.totalProblems || 0} 
+            icon={<Code className="w-5 h-5" />}
+            trend="12 this week"
+            color="indigo"
           />
           <StatCard 
-            title="Avg Time Complexity" 
-            value={summary?.avgTimeComplexity || "N/A"} 
-            icon={<Clock className="text-purple-600" />}
+            title="This Week" 
+            value={summary?.thisWeek || 0} 
+            icon={<Calendar className="w-5 h-5" />}
+            color="blue"
+          />
+          <StatCard 
+            title="Avg Complexity" 
+            value={summary?.avgTimeComplexity || "O(n)"} 
+            icon={<Clock className="w-5 h-5" />}
+            color="purple"
           />
           <StatCard 
             title="Streak" 
             value={`${summary?.streak || 0} days`} 
-            icon={<Trophy className="text-yellow-600" />}
-          />
-           <StatCard 
-            title="This Month" 
-            value={summary?.monthlySolved || 0} 
-            icon={<Calendar className="text-green-600" />}
+            icon={<Trophy className="w-5 h-5" />}
+            trend="7 day streak!"
+            color="yellow"
           />
         </div>
 
@@ -195,22 +203,37 @@ const Dashboard = () => {
   );
 };
 
-const StatCard = ({ title, value, icon, trend }) => (
-  <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-start justify-between">
-    <div>
-      <p className="text-sm font-medium text-slate-500">{title}</p>
-      <h3 className="text-3xl font-bold text-slate-900 mt-2">{value}</h3>
-      {trend && (
-        <p className="flex items-center text-xs font-medium text-green-600 mt-2">
-          <ArrowUpRight className="w-3 h-3 mr-1" />
-          {trend}
-        </p>
-      )}
-    </div>
-    <div className="p-3 bg-slate-50 rounded-xl">
-      {icon}
-    </div>
-  </div>
-);
+const StatCard = ({ title, value, icon, trend, color = "indigo" }) => {
+  const colorClasses = {
+    indigo: "bg-indigo-50 text-indigo-600",
+    purple: "bg-purple-50 text-purple-600",
+    yellow: "bg-yellow-50 text-yellow-600",
+    green: "bg-green-50 text-green-600",
+    blue: "bg-blue-50 text-blue-600"
+  };
+
+  return (
+    <motion.div 
+      whileHover={{ y: -2 }}
+      className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all"
+    >
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">{title}</p>
+          <h3 className="text-3xl font-bold text-slate-900 mt-2">{value}</h3>
+          {trend && (
+            <p className="flex items-center text-xs font-medium text-green-600 mt-3">
+              <TrendingUp className="w-3 h-3 mr-1" />
+              {trend}
+            </p>
+          )}
+        </div>
+        <div className={`p-3 ${colorClasses[color]} rounded-xl`}>
+          {icon}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
 
 export default Dashboard;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Filter, Folder, Trash2, ArrowRight, Plus, LayoutGrid, Clock, Zap } from 'lucide-react';
+import { Search, Filter, Folder, Trash2, ArrowRight, Plus, LayoutGrid, Clock, Zap, MoreVertical, Eye, Edit, Download } from 'lucide-react';
 import api from '../services/api';
 
 const Problems = () => {
@@ -10,7 +10,8 @@ const Problems = () => {
   const [folders, setFolders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filter, setFilter] = useState('All'); 
+  const [filter, setFilter] = useState('All');
+  const [openDropdown, setOpenDropdown] = useState(null); 
 
   useEffect(() => {
     const loadData = async () => {
@@ -46,6 +47,26 @@ const Problems = () => {
       } catch (err) {
           console.error("Failed to delete", err);
       }
+  }
+
+  const handleDownload = async (problemId) => {
+    try {
+      const response = await api.get(`/export/problems/${problemId}/pdf`, {
+        responseType: 'blob'
+      });
+      
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `problem-${problemId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Failed to download PDF", err);
+      alert("Failed to download PDF. Please try again.");
+    }
   }
 
   return (
@@ -156,12 +177,52 @@ const Problems = () => {
                                             {problem.difficulty}
                                         </span>
                                     </div>
-                                    <button 
-                                        onClick={(e) => { e.stopPropagation(); handleDelete(problem._id); }}
-                                        className="text-slate-300 hover:text-red-500 transition-colors"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </button>
+                                    <div className="relative">
+                                        <button 
+                                            onClick={(e) => { 
+                                                e.stopPropagation(); 
+                                                setOpenDropdown(openDropdown === problem._id ? null : problem._id);
+                                            }}
+                                            className="text-slate-400 hover:text-slate-600 transition-colors p-1 hover:bg-slate-50 rounded"
+                                        >
+                                            <MoreVertical className="w-5 h-5" />
+                                        </button>
+                                        
+                                        {openDropdown === problem._id && (
+                                            <div className="absolute right-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-slate-200 z-10 py-1">
+                                                <Link
+                                                    to={`/problems/${problem._id}`}
+                                                    className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                                                    onClick={() => setOpenDropdown(null)}
+                                                >
+                                                    <Eye className="w-4 h-4" />
+                                                    View
+                                                </Link>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDownload(problem._id);
+                                                        setOpenDropdown(null);
+                                                    }}
+                                                    className="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                                                >
+                                                    <Download className="w-4 h-4" />
+                                                    Download
+                                                </button>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDelete(problem._id);
+                                                        setOpenDropdown(null);
+                                                    }}
+                                                    className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className="flex gap-4 mb-4 text-xs font-medium text-slate-500">

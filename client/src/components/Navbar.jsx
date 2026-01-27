@@ -1,7 +1,8 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, UploadCloud, Folder, Trophy, Bell, Moon, Sun, User } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { LayoutDashboard, UploadCloud, Folder, Trophy, Bell, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import ThemeSwitcher from './ThemeSwitcher';
 
 const NavLink = ({ to, icon: Icon, label }) => {
   const location = useLocation();
@@ -24,6 +25,12 @@ const NavLink = ({ to, icon: Icon, label }) => {
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
   
   return (
     <nav className="bg-white border-b border-gray-200">
@@ -46,9 +53,7 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-4">
-             <button className="p-2 text-gray-500 hover:bg-gray-100 rounded-full">
-                <Moon size={20} />
-             </button>
+             <ThemeSwitcher />
              <button className="p-2 text-gray-500 hover:bg-gray-100 rounded-full relative">
                 <Bell size={20} />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
@@ -59,9 +64,9 @@ const Navbar = () => {
                 </button>
                 {/* Simple dropdown for logout for now */}
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 hidden group-hover:block z-50">
-                    <button onClick={logout} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
-                        Sign out
-                    </button>
+                  <button onClick={handleLogout} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
+                    Sign out
+                  </button>
                 </div>
              </div>
           </div>

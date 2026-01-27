@@ -44,10 +44,13 @@ exports.getDashboardSummary = async (req, res) => {
 // 2️⃣ Most Practiced Topics
 exports.getTopicStats = async (req, res) => {
   try {
+    const userId = new mongoose.Types.ObjectId(req.user);
+    
     const stats = await Problem.aggregate([
-      { $match: { userId: req.user } },
+      { $match: { userId } },
       { $group: { _id: "$topic", count: { $sum: 1 } } },
-      { $sort: { count: -1 } }
+      { $sort: { count: -1 } },
+      { $limit: 6 }
     ]);
 
     res.json(
@@ -61,7 +64,7 @@ exports.getTopicStats = async (req, res) => {
 
 exports.getDashboardSummary = async (req, res) => {
   try {
-    const userId = req.user;
+    const userId = new mongoose.Types.ObjectId(req.user);
 
     const now = new Date();
     const startOfWeek = new Date();
@@ -76,8 +79,7 @@ exports.getDashboardSummary = async (req, res) => {
 
       Problem.countDocuments({
         userId,
-        isSolved: true,
-        lastSolvedAt: { $gte: startOfWeek }
+        createdAt: { $gte: startOfWeek }
       }),
 
       Problem.aggregate([
@@ -101,12 +103,27 @@ exports.getDashboardSummary = async (req, res) => {
       difficultyCount[d._id.toLowerCase()] = d.count;
     });
 
+    // Calculate average time complexity
+    const problemsWithComplexity = await Problem.find({ 
+      userId, 
+      timeComplexity: { $exists: true, $ne: "" } 
+    }).select('timeComplexity');
+    
+    const avgTimeComplexity = problemsWithComplexity.length > 0 
+      ? problemsWithComplexity[0].timeComplexity 
+      : "O(n)";
+
+    // Calculate streak (simplified)
+    const streak = 0; // Will be calculated properly by getStreak endpoint
+
     res.json({
       totalProblems,
       thisWeek: solvedThisWeek,
       easy: difficultyCount.easy,
       medium: difficultyCount.medium,
-      hard: difficultyCount.hard
+      hard: difficultyCount.hard,
+      avgTimeComplexity,
+      streak
     });
 
   } catch (err) {

@@ -17,7 +17,7 @@ const UploadProblem = () => {
     title: '',
     description: '',
     code: '',
-    language: 'javascript',
+    language: 'JavaScript',
     difficulty: 'Medium',
     topic: '',
     tags: ''
@@ -122,6 +122,31 @@ const UploadProblem = () => {
                   <option>Hard</option>
                 </select>
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Language</label>
+              <select 
+                name="language"
+                value={formData.language}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none bg-white"
+                required
+              >
+                <option value="JavaScript">JavaScript</option>
+                <option value="Python">Python</option>
+                <option value="Java">Java</option>
+                <option value="C++">C++</option>
+                <option value="C">C</option>
+                <option value="C#">C#</option>
+                <option value="Go">Go</option>
+                <option value="Rust">Rust</option>
+                <option value="TypeScript">TypeScript</option>
+                <option value="Ruby">Ruby</option>
+                <option value="PHP">PHP</option>
+                <option value="Swift">Swift</option>
+                <option value="Kotlin">Kotlin</option>
+              </select>
             </div>
 
             <div>

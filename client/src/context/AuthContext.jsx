@@ -39,9 +39,11 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     const { data } = await api.post('/auth/register', { name, email, password });
-    // Assuming register might not return token automatically, user might need to login.
-    // However, if backend returns token on register (it doesn't seems so from my check), then save it.
-    // Checking authRoutes.js: It returns { message, userId }. No token.
+    // Backend now returns token on registration
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+      setUser(data.user);
+    }
     return data;
   };
 

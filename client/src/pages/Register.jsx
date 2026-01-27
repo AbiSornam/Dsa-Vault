@@ -14,8 +14,8 @@ const Register = () => {
     e.preventDefault();
     try {
       await register(name, email, password);
-      toast.success('Registration successful! Please sign in.');
-      navigate('/login');
+      toast.success('Welcome to CodeIntuit! 🎉');
+      navigate('/dashboard');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Registration failed');
     }

@@ -62,7 +62,7 @@ router.get("/recent", authMiddleware, async (req, res) => {
     const recentProblems = await Problem.find({ userId: req.user })
       .sort({ createdAt: -1 })
       .limit(limit)
-      .select("title difficulty topic tags isSolved createdAt");
+      .select("title difficulty topic tags isSolved createdAt timeComplexity spaceComplexity");
 
     res.json(recentProblems);
   } catch (err) {
