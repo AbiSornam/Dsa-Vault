@@ -54,7 +54,17 @@ export const ThemeProvider = ({ children }) => {
     const theme = themes[currentTheme];
     if (!theme) return; // Guard against undefined theme
     
+    console.log('Applying theme:', currentTheme);
     const root = document.documentElement;
+    
+    // Apply dark class to html element
+    if (currentTheme === 'dark') {
+      root.classList.add('dark');
+      console.log('Dark class added to html');
+    } else {
+      root.classList.remove('dark');
+      console.log('Dark class removed from html');
+    }
     
     // Apply CSS variables
     Object.entries(theme.colors).forEach(([key, value]) => {
@@ -65,8 +75,10 @@ export const ThemeProvider = ({ children }) => {
   }, [currentTheme]);
 
   const changeTheme = (themeName) => {
+    console.log('Changing theme to:', themeName);
     if (themes[themeName]) {
       setCurrentTheme(themeName);
+      console.log('Theme changed successfully to:', themeName);
     }
   };
 

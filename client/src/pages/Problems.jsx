@@ -11,7 +11,7 @@ const Problems = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState('All');
-  const [folderFilter, setFolderFilter] = useState('All');
+  const [folderFilter, setFolderFilter] = useState(null);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [showDifficultyMenu, setShowDifficultyMenu] = useState(false);
   const [showFolderMenu, setShowFolderMenu] = useState(false); 
@@ -39,7 +39,7 @@ const Problems = () => {
       const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                             p.topic.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesDifficulty = difficultyFilter === 'All' || p.difficulty === difficultyFilter;
-      const matchesFolder = folderFilter === 'All' || p.topic === folderFilter;
+      const matchesFolder = !folderFilter || p.topic === folderFilter;
       return matchesSearch && matchesDifficulty && matchesFolder;
   });
 
@@ -74,7 +74,7 @@ const Problems = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 md:p-8 pt-24">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-6 md:p-8 pt-24">
       <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Header */}
@@ -85,7 +85,7 @@ const Problems = () => {
             
             <div className="flex-1 w-full flex justify-between items-center gap-4">
                 <div>
-                     <p className="text-slate-500 text-sm font-medium">Organize and manage your coding problems</p>
+                     <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Organize and manage your coding problems</p>
                 </div>
                 <button 
                     onClick={() => navigate('/upload')}
@@ -100,13 +100,13 @@ const Problems = () => {
         {/* Search & Filters */}
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
              <div className="relative w-full md:w-96">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
                 <input 
                     type="text" 
                     placeholder="Search problems, tags..." 
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 shadow-sm"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900 focus:border-indigo-400 dark:focus:border-indigo-500 shadow-sm"
                 />
              </div>
              
@@ -117,13 +117,13 @@ const Problems = () => {
                             setShowDifficultyMenu(!showDifficultyMenu);
                             setShowFolderMenu(false);
                         }}
-                        className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-slate-200 text-slate-600 text-sm font-medium cursor-pointer hover:bg-slate-50 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                     >
                         <Filter className="w-4 h-4" />
                         {difficultyFilter === 'All' ? 'All Difficulties' : difficultyFilter}
                     </button>
                     {showDifficultyMenu && (
-                        <div className="absolute top-full left-0 mt-1 w-40 bg-white rounded-xl border border-slate-200 shadow-lg z-10">
+                        <div className="absolute top-full left-0 mt-1 w-40 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg z-10">
                             {['All', 'Easy', 'Medium', 'Hard'].map(difficulty => (
                                 <button
                                     key={difficulty}
@@ -133,8 +133,8 @@ const Problems = () => {
                                     }}
                                     className={`w-full text-left px-4 py-2 text-sm ${
                                         difficultyFilter === difficulty
-                                            ? 'bg-indigo-50 text-indigo-600 font-medium'
-                                            : 'text-slate-700 hover:bg-slate-50'
+                                            ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-medium'
+                                            : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
                                     } transition-colors first:rounded-t-lg last:rounded-b-lg`}
                                 >
                                     {difficulty}
@@ -145,48 +145,17 @@ const Problems = () => {
                  </div>
                  
                  <div className="relative">
-                    <button
-                        onClick={() => {
-                            setShowFolderMenu(!showFolderMenu);
-                            setShowDifficultyMenu(false);
-                        }}
-                        className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-slate-200 text-slate-600 text-sm font-medium cursor-pointer hover:bg-slate-50 transition-colors"
-                    >
-                        <Folder className="w-4 h-4" />
-                        {folderFilter === 'All' ? 'All Folders' : folderFilter}
-                    </button>
-                    {showFolderMenu && (
-                        <div className="absolute top-full left-0 mt-1 max-w-xs bg-white rounded-xl border border-slate-200 shadow-lg z-10 max-h-48 overflow-y-auto">
-                            <button
-                                onClick={() => {
-                                    setFolderFilter('All');
-                                    setShowFolderMenu(false);
-                                }}
-                                className={`w-full text-left px-4 py-2 text-sm ${
-                                    folderFilter === 'All'
-                                        ? 'bg-indigo-50 text-indigo-600 font-medium'
-                                        : 'text-slate-700 hover:bg-slate-50'
-                                } transition-colors`}
-                            >
-                                All
-                            </button>
-                            {folders.map((folder) => (
-                                <button
-                                    key={folder.topic}
-                                    onClick={() => {
-                                        setFolderFilter(folder.topic);
-                                        setShowFolderMenu(false);
-                                    }}
-                                    className={`w-full text-left px-4 py-2 text-sm ${
-                                        folderFilter === folder.topic
-                                            ? 'bg-indigo-50 text-indigo-600 font-medium'
-                                            : 'text-slate-700 hover:bg-slate-50'
-                                    } transition-colors`}
-                                >
-                                    {folder.topic} ({folder.count})
-                                </button>
-                            ))}
-                        </div>
+                    {folderFilter && (
+                        <button
+                            onClick={() => {
+                                setFolderFilter(null);
+                                setDifficultyFilter('All');
+                            }}
+                            className="flex items-center gap-2 px-4 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl border border-indigo-200 dark:border-indigo-800 text-sm font-medium cursor-pointer hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors"
+                        >
+                            <Folder className="w-4 h-4" />
+                            {folderFilter} ✕
+                        </button>
                     )}
                  </div>
                  
@@ -198,16 +167,20 @@ const Problems = () => {
 
         {/* Folders Section */}
         <div className="space-y-4">
-             <h3 className="text-lg font-semibold text-slate-800">Folders</h3>
+             <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">Folders</h3>
              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                  {folders.map((folder, i) => (
-                     <div key={i} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow cursor-pointer flex flex-col items-center justify-center text-center gap-3 group">
-                         <div className="p-3 bg-slate-50 rounded-xl group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors text-slate-500">
+                     <div 
+                         key={i} 
+                         onClick={() => setFolderFilter(folder.topic)}
+                         className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow cursor-pointer flex flex-col items-center justify-center text-center gap-3 group"
+                     >
+                         <div className="p-3 bg-slate-50 dark:bg-slate-700 rounded-xl group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors text-slate-500 dark:text-slate-400">
                              <Folder className="w-6 h-6" />
                          </div>
                          <div>
-                             <h4 className="font-semibold text-slate-900 text-sm">{folder.topic}</h4>
-                             <p className="text-xs text-slate-500 mt-1">{folder.count} problems</p>
+                             <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-sm">{folder.topic}</h4>
+                             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{folder.count} problems</p>
                          </div>
                      </div>
                  ))}
@@ -219,9 +192,10 @@ const Problems = () => {
              </div>
         </div>
 
-        {/* Problems Grid */}
+{/* Problems Grid - Only show when a folder is selected */}
+        {folderFilter && (
         <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-slate-800">Problems ({filteredProblems.length})</h3>
+            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">Problems ({filteredProblems.length})</h3>
             
             {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -346,6 +320,7 @@ const Problems = () => {
                 </div>
             )}
         </div>
+        )}
 
       </div>
     </div>

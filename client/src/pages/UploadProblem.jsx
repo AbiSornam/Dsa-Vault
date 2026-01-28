@@ -55,22 +55,22 @@ const UploadProblem = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-8 pt-24"> {/* Added pt-24 for navbar spacing if needed */}
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-8 pt-24"> {/* Added pt-24 for navbar spacing if needed */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
         
         {/* Left Column: Form */}
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 h-fit"
+          className="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 h-fit"
         >
           <div className="flex items-center gap-3 mb-8">
             <div className="p-3 bg-indigo-50 rounded-xl">
               <Upload className="text-indigo-600 w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">Upload Problem</h1>
-              <p className="text-slate-500 text-sm">Paste your solution and let AI analyze it</p>
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Upload Problem</h1>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">Paste your solution and let AI analyze it</p>
             </div>
           </div>
 
@@ -84,14 +84,14 @@ const UploadProblem = () => {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Problem Title</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Problem Title</label>
               <input 
                 type="text" 
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
                 placeholder="e.g., Two Sum"
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900 outline-none transition-all"
                 required
               />
             </div>

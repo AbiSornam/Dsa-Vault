@@ -47,8 +47,8 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 dark:border-indigo-400"></div>
       </div>
     );
   }
@@ -60,14 +60,14 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/20 to-slate-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/20 to-slate-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
-            <p className="text-slate-500 mt-1">Track your progress and analyze your coding journey</p>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Dashboard</h1>
+            <p className="text-slate-500 dark:text-slate-400 mt-1">Track your progress and analyze your coding journey</p>
           </div>
         </div>
 
@@ -104,8 +104,8 @@ const Dashboard = () => {
         {/* Charts Row 1 */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Difficulty Distribution */}
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-            <h3 className="text-lg font-semibold text-slate-800 mb-6">Problems by Difficulty</h3>
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-6">Problems by Difficulty</h3>
             <div className="h-64 flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -135,8 +135,8 @@ const Dashboard = () => {
           </div>
 
           {/* Topics Bar Chart */}
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-            <h3 className="text-lg font-semibold text-slate-800 mb-6">Most Practiced Topics</h3>
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-6">Most Practiced Topics</h3>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={topics}>
@@ -156,15 +156,15 @@ const Dashboard = () => {
         </div>
 
         {/* Recent Problems */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-          <h3 className="text-lg font-semibold text-slate-800 mb-6">Recent Problems</h3>
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+          <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-6">Recent Problems</h3>
           <div className="space-y-4">
             {recentProblems.length > 0 ? (
               recentProblems.map((problem) => (
-                <div key={problem._id} className="flex items-center justify-between p-4 hover:bg-slate-50 rounded-xl transition-colors border border-transparent hover:border-slate-200">
+                <div key={problem._id} className="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-xl transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-600">
                   <div>
-                    <h4 className="font-medium text-slate-900">{problem.title}</h4>
-                    <div className="flex items-center gap-3 mt-1 text-xs text-slate-500">
+                    <h4 className="font-medium text-slate-900 dark:text-slate-100">{problem.title}</h4>
+                    <div className="flex items-center gap-3 mt-1 text-xs text-slate-500 dark:text-slate-400">
                       <span className={`px-2 py-0.5 rounded-full ${
                         problem.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
                         problem.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
@@ -215,12 +215,12 @@ const StatCard = ({ title, value, icon, trend, color = "indigo" }) => {
   return (
     <motion.div 
       whileHover={{ y: -2 }}
-      className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all"
+      className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-all"
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">{title}</p>
-          <h3 className="text-3xl font-bold text-slate-900 mt-2">{value}</h3>
+          <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">{title}</p>
+          <h3 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mt-2">{value}</h3>
           {trend && (
             <p className="flex items-center text-xs font-medium text-green-600 mt-3">
               <TrendingUp className="w-3 h-3 mr-1" />
