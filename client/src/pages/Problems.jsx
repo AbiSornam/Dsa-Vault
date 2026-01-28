@@ -10,8 +10,11 @@ const Problems = () => {
   const [folders, setFolders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filter, setFilter] = useState('All');
-  const [openDropdown, setOpenDropdown] = useState(null); 
+  const [difficultyFilter, setDifficultyFilter] = useState('All');
+  const [folderFilter, setFolderFilter] = useState('All');
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [showDifficultyMenu, setShowDifficultyMenu] = useState(false);
+  const [showFolderMenu, setShowFolderMenu] = useState(false); 
 
   useEffect(() => {
     const loadData = async () => {
@@ -35,8 +38,9 @@ const Problems = () => {
   const filteredProblems = problems.filter(p => {
       const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                             p.topic.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesFilter = filter === 'All' || p.difficulty === filter;
-      return matchesSearch && matchesFilter;
+      const matchesDifficulty = difficultyFilter === 'All' || p.difficulty === difficultyFilter;
+      const matchesFolder = folderFilter === 'All' || p.topic === folderFilter;
+      return matchesSearch && matchesDifficulty && matchesFolder;
   });
 
   const handleDelete = async (id) => {
@@ -107,14 +111,85 @@ const Problems = () => {
              </div>
              
              <div className="flex gap-2">
-                 <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-slate-200 text-slate-600 text-sm font-medium cursor-pointer hover:bg-slate-50">
-                    <Filter className="w-4 h-4" />
-                    {filter === 'All' ? 'All Difficulties' : filter}
+                 <div className="relative">
+                    <button
+                        onClick={() => {
+                            setShowDifficultyMenu(!showDifficultyMenu);
+                            setShowFolderMenu(false);
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-slate-200 text-slate-600 text-sm font-medium cursor-pointer hover:bg-slate-50 transition-colors"
+                    >
+                        <Filter className="w-4 h-4" />
+                        {difficultyFilter === 'All' ? 'All Difficulties' : difficultyFilter}
+                    </button>
+                    {showDifficultyMenu && (
+                        <div className="absolute top-full left-0 mt-1 w-40 bg-white rounded-xl border border-slate-200 shadow-lg z-10">
+                            {['All', 'Easy', 'Medium', 'Hard'].map(difficulty => (
+                                <button
+                                    key={difficulty}
+                                    onClick={() => {
+                                        setDifficultyFilter(difficulty);
+                                        setShowDifficultyMenu(false);
+                                    }}
+                                    className={`w-full text-left px-4 py-2 text-sm ${
+                                        difficultyFilter === difficulty
+                                            ? 'bg-indigo-50 text-indigo-600 font-medium'
+                                            : 'text-slate-700 hover:bg-slate-50'
+                                    } transition-colors first:rounded-t-lg last:rounded-b-lg`}
+                                >
+                                    {difficulty}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                  </div>
-                 <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-slate-200 text-slate-600 text-sm font-medium cursor-pointer hover:bg-slate-50">
-                    <Folder className="w-4 h-4" />
-                    All Folders
+                 
+                 <div className="relative">
+                    <button
+                        onClick={() => {
+                            setShowFolderMenu(!showFolderMenu);
+                            setShowDifficultyMenu(false);
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-slate-200 text-slate-600 text-sm font-medium cursor-pointer hover:bg-slate-50 transition-colors"
+                    >
+                        <Folder className="w-4 h-4" />
+                        {folderFilter === 'All' ? 'All Folders' : folderFilter}
+                    </button>
+                    {showFolderMenu && (
+                        <div className="absolute top-full left-0 mt-1 max-w-xs bg-white rounded-xl border border-slate-200 shadow-lg z-10 max-h-48 overflow-y-auto">
+                            <button
+                                onClick={() => {
+                                    setFolderFilter('All');
+                                    setShowFolderMenu(false);
+                                }}
+                                className={`w-full text-left px-4 py-2 text-sm ${
+                                    folderFilter === 'All'
+                                        ? 'bg-indigo-50 text-indigo-600 font-medium'
+                                        : 'text-slate-700 hover:bg-slate-50'
+                                } transition-colors`}
+                            >
+                                All
+                            </button>
+                            {folders.map((folder) => (
+                                <button
+                                    key={folder.topic}
+                                    onClick={() => {
+                                        setFolderFilter(folder.topic);
+                                        setShowFolderMenu(false);
+                                    }}
+                                    className={`w-full text-left px-4 py-2 text-sm ${
+                                        folderFilter === folder.topic
+                                            ? 'bg-indigo-50 text-indigo-600 font-medium'
+                                            : 'text-slate-700 hover:bg-slate-50'
+                                    } transition-colors`}
+                                >
+                                    {folder.topic} ({folder.count})
+                                </button>
+                            ))}
+                        </div>
+                    )}
                  </div>
+                 
                  <div className="p-2 bg-indigo-600 text-white rounded-lg cursor-pointer">
                     <LayoutGrid className="w-5 h-5" />
                  </div>

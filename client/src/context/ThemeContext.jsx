@@ -41,7 +41,7 @@ export const themes = {
 };
 
 export const ThemeProvider = ({ children }) => {
-  const [currentTheme, setCurrentTheme] = useState('default');
+  const [currentTheme, setCurrentTheme] = useState('light');
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -52,6 +52,8 @@ export const ThemeProvider = ({ children }) => {
 
   useEffect(() => {
     const theme = themes[currentTheme];
+    if (!theme) return; // Guard against undefined theme
+    
     const root = document.documentElement;
     
     // Apply CSS variables
