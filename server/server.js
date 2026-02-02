@@ -4,6 +4,7 @@ require("dotenv").config();
 
 const connectDB = require("./config/db"); // 👈 VERY IMPORTANT
 const problemRoutes = require("./routes/problemRoutes");
+const { startRevisionReminderCron } = require("./services/revisionReminderCron");
 
 const app = express();
 
@@ -24,6 +25,8 @@ app.use("/api/dashboard", require("./routes/dashboardRoutes"));
 app.use("/api/leaderboard", require("./routes/leaderboardRoutes"));
 app.use("/api/export", require("./routes/exportRoutes"));
 app.use("/api/export", require("./routes/pdfRoutes"));
+app.use("/api/badges", require("./routes/badgeRoutes"));
+app.use("/api/badges", require("./routes/badgeTriggerRoutes"));
 
 
 
@@ -35,4 +38,7 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
+  
+  // Start the revision reminder cron job
+  startRevisionReminderCron();
 });

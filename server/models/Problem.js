@@ -60,6 +60,18 @@ const problemSchema = new mongoose.Schema(
       suggestions: String
     },
 
+    // Revision reminder tracking
+    revisionRemindersSent: {
+      day4: {
+        type: Boolean,
+        default: false
+      },
+      day7: {
+        type: Boolean,
+        default: false
+      }
+    },
+
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

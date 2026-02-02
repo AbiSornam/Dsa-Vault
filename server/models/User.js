@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema(
     streak: {
       type: Number,
       default: 0
+    },
+    emailRemindersEnabled: {
+      type: Boolean,
+      default: true
     }
   },
   { timestamps: true }

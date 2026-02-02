@@ -11,6 +11,8 @@ import UploadProblem from './pages/UploadProblem';
 import Leaderboard from './pages/Leaderboard';
 import Problems from './pages/Problems';
 import ProblemDetails from './pages/ProblemDetails';
+import Badges from './pages/Badges';
+import BadgeEarned from './pages/BadgeEarned';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -66,6 +68,16 @@ function App() {
            <Route path="/problems/:id" element={
             <ProtectedRoute>
               <ProblemDetails />
+            </ProtectedRoute>
+          } />
+           <Route path="/badges" element={
+            <ProtectedRoute>
+              <Badges />
+            </ProtectedRoute>
+          } />
+           <Route path="/badge-earned" element={
+            <ProtectedRoute>
+              <BadgeEarned />
             </ProtectedRoute>
           } />
         </Routes>

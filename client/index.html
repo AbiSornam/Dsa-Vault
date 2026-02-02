@@ -5,6 +5,17 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>client</title>
+    <script>
+      // Initialize theme before React renders to prevent flash
+      (function() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        const darkThemes = ['dark', 'night', 'coffee', 'dracula', 'black', 'luxury', 'halloween', 'business', 'forest', 'synthwave', 'cyberpunk', 'dim', 'abyss'];
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        if (darkThemes.includes(savedTheme)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

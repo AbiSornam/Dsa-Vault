@@ -1,5 +1,6 @@
 const Problem = require("../models/Problem");
 const { generateExplanation } = require("../utils/gemini"); // ✅ ADD THIS
+const badgeService = require("../services/badgeService");
 
 /**
  * CREATE PROBLEM
@@ -40,7 +41,10 @@ exports.createProblem = async (req, res) => {
       userId: req.user
     });
 
-    res.status(201).json(problem);
+    // Check for new badges after creating problem
+    const newBadges = await badgeService.checkAndAwardBadges(req.user);
+
+    res.status(201).json({ problem, newBadges });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

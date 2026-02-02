@@ -4,79 +4,90 @@ const ThemeContext = createContext();
 
 export const useTheme = () => useContext(ThemeContext);
 
-// Light to Dark Theme
-export const themes = {
-  light: {
-    name: 'Light Mode',
-    colors: {
-      primary: '#7c3aed',
-      secondary: '#6366f1',
-      accent: '#8b5cf6',
-      background: '#f8fafc',
-      surface: '#ffffff',
-      text: '#0f172a',
-      textSecondary: '#64748b',
-      border: '#e2e8f0',
-      success: '#10b981',
-      warning: '#f59e0b',
-      error: '#ef4444'
-    }
-  },
-  dark: {
-    name: 'Dark Mode',
-    colors: {
-      primary: '#8b5cf6',
-      secondary: '#7c3aed',
-      accent: '#a78bfa',
-      background: '#0f172a',
-      surface: '#1e293b',
-      text: '#f1f5f9',
-      textSecondary: '#94a3b8',
-      border: '#334155',
-      success: '#22c55e',
-      warning: '#fbbf24',
-      error: '#f87171'
-    }
-  }
-};
+// DaisyUI theme list (35+ themes)
+export const themes = [
+  { id: 'light', name: 'Light' },
+  { id: 'dark', name: 'Dark' },
+  { id: 'cupcake', name: 'Cupcake' },
+  { id: 'bumblebee', name: 'Bumblebee' },
+  { id: 'emerald', name: 'Emerald' },
+  { id: 'corporate', name: 'Corporate' },
+  { id: 'synthwave', name: 'Synthwave' },
+  { id: 'retro', name: 'Retro' },
+  { id: 'cyberpunk', name: 'Cyberpunk' },
+  { id: 'valentine', name: 'Valentine' },
+  { id: 'halloween', name: 'Halloween' },
+  { id: 'garden', name: 'Garden' },
+  { id: 'forest', name: 'Forest' },
+  { id: 'aqua', name: 'Aqua' },
+  { id: 'lofi', name: 'Lo-fi' },
+  { id: 'pastel', name: 'Pastel' },
+  { id: 'fantasy', name: 'Fantasy' },
+  { id: 'wireframe', name: 'Wireframe' },
+  { id: 'black', name: 'Black' },
+  { id: 'luxury', name: 'Luxury' },
+  { id: 'dracula', name: 'Dracula' },
+  { id: 'cmyk', name: 'CMYK' },
+  { id: 'autumn', name: 'Autumn' },
+  { id: 'business', name: 'Business' },
+  { id: 'acid', name: 'Acid' },
+  { id: 'lemonade', name: 'Lemonade' },
+  { id: 'night', name: 'Night' },
+  { id: 'coffee', name: 'Coffee' },
+  { id: 'winter', name: 'Winter' },
+  { id: 'dim', name: 'Dim' },
+  { id: 'nord', name: 'Nord' },
+  { id: 'sunset', name: 'Sunset' },
+  { id: 'caramellatte', name: 'Caramel Latte' },
+  { id: 'abyss', name: 'Abyss' },
+  { id: 'silk', name: 'Silk' },
+];
+
+const darkThemes = new Set([
+  'dark',
+  'night',
+  'coffee',
+  'dracula',
+  'black',
+  'luxury',
+  'halloween',
+  'business',
+  'forest',
+  'synthwave',
+  'cyberpunk',
+  'dim',
+  'abyss',
+]);
 
 export const ThemeProvider = ({ children }) => {
-  const [currentTheme, setCurrentTheme] = useState('light');
-
-  useEffect(() => {
+  // Initialize with saved theme or default to 'light'
+  const [currentTheme, setCurrentTheme] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme && themes[savedTheme]) {
-      setCurrentTheme(savedTheme);
-    }
-  }, []);
+    return (savedTheme && themes.some((theme) => theme.id === savedTheme)) ? savedTheme : 'light';
+  });
 
   useEffect(() => {
-    const theme = themes[currentTheme];
-    if (!theme) return; // Guard against undefined theme
-    
+    if (!currentTheme) return;
+
     console.log('Applying theme:', currentTheme);
     const root = document.documentElement;
-    
-    // Apply dark class to html element
-    if (currentTheme === 'dark') {
+
+    // Apply daisyUI theme only to root (body and #root will inherit)
+    root.setAttribute('data-theme', currentTheme);
+
+    // Keep Tailwind dark: classes in sync for dark-ish themes
+    if (darkThemes.has(currentTheme)) {
       root.classList.add('dark');
-      console.log('Dark class added to html');
     } else {
       root.classList.remove('dark');
-      console.log('Dark class removed from html');
     }
-    
-    // Apply CSS variables
-    Object.entries(theme.colors).forEach(([key, value]) => {
-      root.style.setProperty(`--color-${key}`, value);
-    });
     
     localStorage.setItem('theme', currentTheme);
   }, [currentTheme]);
 
   const changeTheme = (themeName) => {
     console.log('Changing theme to:', themeName);
-    if (themes[themeName]) {
+    if (themes.some((theme) => theme.id === themeName)) {
       setCurrentTheme(themeName);
       console.log('Theme changed successfully to:', themeName);
     }
@@ -84,7 +95,6 @@ export const ThemeProvider = ({ children }) => {
 
   const value = {
     currentTheme,
-    theme: themes[currentTheme],
     themes,
     changeTheme
   };
